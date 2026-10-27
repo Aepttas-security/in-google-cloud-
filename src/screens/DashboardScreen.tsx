@@ -289,7 +289,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   onOpenChildDashboard,
 }) => {
   const { colors, mode, toggleTheme } = useAppTheme();
-  const styles = React.useMemo(() => getStyles(colors), [colors]);
+  const styles = React.useMemo(() => getStyles(colors, mode), [colors, mode]);
   const { dashboardMetrics, quarantinedFiles, historyLogs } = useApkScanner();
   const [activeTab, setActiveTab] = useState('Home');
   const [vulnData, setVulnData] = useState<{ scannedApps?: any[]; quarantinedApps?: any[]; outdatedApps?: any[] } | null>(null);
@@ -539,6 +539,15 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
           </View>
 
           <View style={styles.headerRight}>
+            {/* Theme Toggle (Light / Dark) */}
+            <TouchableOpacity 
+              style={styles.bellButton} 
+              onPress={toggleTheme}
+              accessibilityLabel="Toggle Theme"
+            >
+              <Icon name={mode === 'dark' ? 'light-mode' : 'dark-mode'} color={colors.text} size={20} />
+            </TouchableOpacity>
+
             {/* Notification Bell */}
             <TouchableOpacity style={styles.bellButton} onPress={() => setShowNotificationModal(true)}>
               <Icon name="notifications" color={colors.text} size={20} />
@@ -621,7 +630,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
 
         {/* 2. MAIN STATUS CARD */}
         <LinearGradient
-          colors={['#5b21b6', '#1e3a8a', '#0f172a']}
+          colors={mode === 'dark' ? ['#5b21b6', '#1e3a8a', '#0f172a'] : ['#4f46e5', '#3b82f6', '#2563eb']}
           style={styles.statusCard}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -630,17 +639,17 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
             {/* Glowing Shield SVG */}
             <View style={styles.shieldWrapper}>
               <Svg width={80} height={80} viewBox="0 0 100 100">
-                <Circle cx="50" cy="50" r="45" fill={colors.purpleAccent} opacity={0.15} />
-                <Circle cx="50" cy="50" r="35" fill={colors.cyanAccent} opacity={0.1} />
+                <Circle cx="50" cy="50" r="45" fill="#ffffff" opacity={0.15} />
+                <Circle cx="50" cy="50" r="35" fill="#38bdf8" opacity={0.25} />
                 <Path
                   d="M50,20 L80,30 V50 C80,68 67,82 50,87 C33,82 20,68 20,50 V30 L50,20 Z"
-                  fill="#1e293b"
-                  stroke={colors.cyanAccent}
+                  fill="rgba(255, 255, 255, 0.2)"
+                  stroke="#38bdf8"
                   strokeWidth="3"
                 />
                 <Path
                   d="M45,63 L32,50 L37,45 L45,53 L63,35 L68,40 Z"
-                  fill={colors.cyanAccent}
+                  fill="#ffffff"
                 />
               </Svg>
             </View>
@@ -661,7 +670,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
               </View>
               <View style={styles.scanTimeRow}>
                 <Text style={styles.scanTimeText}>Last scanned: 2 min ago </Text>
-                <Icon name="refresh" color="#d1d5db" size={12} />
+                <Icon name="refresh" color="#e0e7ff" size={12} />
               </View>
             </View>
           </View>
@@ -712,13 +721,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
 
         {/* QUICK ACTIONS GRID */}
         <View style={styles.gridRow}>
-          <TouchableOpacity style={styles.gridItem}>
-            <View style={[styles.gridIconBg, { backgroundColor: colors.purpleAccent + '1E' }]}>
-              <Icon name="shield" color={colors.purpleAccent} size={20} />
-            </View>
-            <Text style={styles.gridLabel}>Antivirus</Text>
-          </TouchableOpacity>
-
           <TouchableOpacity style={styles.gridItem} onPress={onOpenMalwareAnalysis}>
             <View style={[styles.gridIconBg, { backgroundColor: colors.greenSuccess + '1E' }]}>
               <Icon name="inventory" color={colors.greenSuccess} size={20} />
@@ -761,13 +763,6 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
               <Icon name="people" color={colors.pinkAccent} size={20} />
             </View>
             <Text style={styles.gridLabel}>Parental Control</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.gridItem}>
-            <View style={[styles.gridIconBg, { backgroundColor: colors.cyanAccent + '1E' }]}>
-              <Icon name="vpn-key" color={colors.cyanAccent} size={20} />
-            </View>
-            <Text style={styles.gridLabel}>Secure VPN</Text>
           </TouchableOpacity>
         </View>
 
@@ -1874,7 +1869,7 @@ export const DashboardScreen: React.FC<DashboardScreenProps> = ({
   );
 };
 
-const getStyles = (colors: any) => StyleSheet.create({
+const getStyles = (colors: any, mode: 'light' | 'dark' = 'light') => StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.background,
@@ -1892,8 +1887,8 @@ const getStyles = (colors: any) => StyleSheet.create({
     width: 450,
     height: 450,
     borderRadius: 225,
-    backgroundColor: '#201a54',
-    opacity: 0.35,
+    backgroundColor: mode === 'dark' ? '#201a54' : 'transparent',
+    opacity: mode === 'dark' ? 0.35 : 0,
     marginTop: -200,
   },
   scrollContent: {
@@ -2080,10 +2075,15 @@ const getStyles = (colors: any) => StyleSheet.create({
     width: '100%',
     borderRadius: 20,
     padding: 16,
-    borderWidth: 1,
-    borderColor: '#38bdf844', // translucent cyan/purple gradient border simulation
+    borderWidth: mode === 'dark' ? 1 : 0,
+    borderColor: mode === 'dark' ? '#38bdf844' : 'transparent',
     marginTop: 8,
     marginBottom: 20,
+    elevation: mode === 'dark' ? 3 : 6,
+    shadowColor: mode === 'dark' ? '#000' : '#4f46e5',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: mode === 'dark' ? 0.3 : 0.2,
+    shadowRadius: 10,
   },
   statusCardContent: {
     flexDirection: 'row',
@@ -2100,10 +2100,10 @@ const getStyles = (colors: any) => StyleSheet.create({
     paddingLeft: 12,
   },
   statusLabelText: {
-    color: '#D1D5DB',
+    color: '#e0e7ff',
     fontSize: 10.5,
-    fontWeight: '600',
-    letterSpacing: 0.5,
+    fontWeight: '700',
+    letterSpacing: 0.8,
   },
   protectedRow: {
     flexDirection: 'row',
@@ -2112,24 +2112,25 @@ const getStyles = (colors: any) => StyleSheet.create({
     flexWrap: 'nowrap',
   },
   protectedText: {
-    color: colors.text,
-    fontSize: 18,
+    color: '#ffffff',
+    fontSize: 19,
     fontWeight: '900',
     letterSpacing: 0.5,
     flexShrink: 1,
   },
   checkBadge: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
-    backgroundColor: colors.greenSuccess,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#10b981',
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 6,
   },
   scoreLabel: {
-    color: colors.textMuted,
+    color: '#c7d2fe',
     fontSize: 11,
+    fontWeight: '500',
     marginTop: 2,
   },
   scoreRow: {
@@ -2137,12 +2138,12 @@ const getStyles = (colors: any) => StyleSheet.create({
     alignItems: 'flex-end',
   },
   scoreBig: {
-    color: colors.text,
+    color: '#ffffff',
     fontSize: 28,
     fontWeight: 'bold',
   },
   scoreSmall: {
-    color: colors.textMuted,
+    color: '#c7d2fe',
     fontSize: 13,
     marginBottom: 3,
     marginLeft: 2,
@@ -2153,7 +2154,7 @@ const getStyles = (colors: any) => StyleSheet.create({
     marginTop: 6,
   },
   scanTimeText: {
-    color: '#D1D5DB',
+    color: '#e0e7ff',
     fontSize: 10.5,
   },
   statsContainer: {
@@ -2214,7 +2215,7 @@ const getStyles = (colors: any) => StyleSheet.create({
     width: '100%',
   },
   gridItem: {
-    flex: 0.23,
+    flex: 0.31,
     height: 90,
     backgroundColor: colors.cardBackground,
     borderWidth: 1,

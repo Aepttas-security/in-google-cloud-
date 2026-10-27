@@ -38,9 +38,9 @@ export const lightColors = {
   outerGlow: '#e2e8f0',
 };
 
-// Fallback for files that haven't been refactored yet, defaults to dark
-export const colors = darkColors;
-export type ThemeColors = typeof darkColors;
+// Default is light theme; dark mode is an optional preference
+export const colors = lightColors;
+export type ThemeColors = typeof lightColors;
 
 export const theme = {
   colors,

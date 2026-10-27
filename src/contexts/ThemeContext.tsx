@@ -1,7 +1,10 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { lightColors, darkColors, ThemeColors } from '../styles/theme';
 
-type ThemeMode = 'light' | 'dark';
+export type ThemeMode = 'light' | 'dark';
+
+const THEME_STORAGE_KEY = '@aepttas_theme_mode';
 
 interface ThemeContextType {
   mode: ThemeMode;
@@ -13,16 +16,36 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [mode, setMode] = useState<ThemeMode>('dark');
+  // App default color mode is 'light', with 'dark' as an optional toggle
+  const [mode, setMode] = useState<ThemeMode>('light');
+
+  useEffect(() => {
+    AsyncStorage.getItem(THEME_STORAGE_KEY)
+      .then((savedMode) => {
+        if (savedMode === 'dark' || savedMode === 'light') {
+          setMode(savedMode);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const toggleTheme = () => {
-    setMode((prevMode) => (prevMode === 'light' ? 'dark' : 'light'));
+    setMode((prevMode) => {
+      const nextMode = prevMode === 'light' ? 'dark' : 'light';
+      AsyncStorage.setItem(THEME_STORAGE_KEY, nextMode).catch(() => {});
+      return nextMode;
+    });
+  };
+
+  const setTheme = (newMode: ThemeMode) => {
+    setMode(newMode);
+    AsyncStorage.setItem(THEME_STORAGE_KEY, newMode).catch(() => {});
   };
 
   const colors = mode === 'light' ? lightColors : darkColors;
 
   return (
-    <ThemeContext.Provider value={{ mode, colors, toggleTheme, setTheme: setMode }}>
+    <ThemeContext.Provider value={{ mode, colors, toggleTheme, setTheme }}>
       {children}
     </ThemeContext.Provider>
   );
