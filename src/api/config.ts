@@ -11,7 +11,7 @@ import { Platform } from 'react-native';
  */
 
 // 🌐 REMOTE TUNNEL URL (Replace with your live tunnel or remote host)
-export const REMOTE_TUNNEL_URL = '<REPLACE_WITH_YOUR_BACKEND_URL_HERE>';
+export const REMOTE_TUNNEL_URL = '<https://aepttas-backend-321380050559.asia-south1.run.app/>';
 
 // Local fallback hosts
 export const LAN_HOST = '192.168.28.93';
