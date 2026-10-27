@@ -49,7 +49,7 @@ export const setResolvedHost = (url: string) => {
 
 const getLocalBaseUrl = (port: number): string => {
   if (customBaseUrl) return customBaseUrl;
-  return `http://${DEFAULT_HOST}:${port}`;
+  return PRODUCTION_URL || `http://${DEFAULT_HOST}:${port}`;
 };
 
 export const getParentalBaseUrl = (): string => {
