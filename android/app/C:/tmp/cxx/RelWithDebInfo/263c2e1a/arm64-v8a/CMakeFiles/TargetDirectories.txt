@@ -1,0 +1,15 @@
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/CMakeFiles/appmodules.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/CMakeFiles/edit_cache.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/CMakeFiles/rebuild_cache.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/AsyncStorageSpec_autolinked_build/CMakeFiles/react_codegen_AsyncStorageSpec.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/AsyncStorageSpec_autolinked_build/CMakeFiles/edit_cache.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/AsyncStorageSpec_autolinked_build/CMakeFiles/rebuild_cache.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/RNMapsSpecs_autolinked_build/CMakeFiles/react_codegen_RNMapsSpecs.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/RNMapsSpecs_autolinked_build/CMakeFiles/edit_cache.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/RNMapsSpecs_autolinked_build/CMakeFiles/rebuild_cache.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/safeareacontext_autolinked_build/CMakeFiles/react_codegen_safeareacontext.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/safeareacontext_autolinked_build/CMakeFiles/edit_cache.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/safeareacontext_autolinked_build/CMakeFiles/rebuild_cache.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/rnsvg_autolinked_build/CMakeFiles/edit_cache.dir
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/arm64-v8a/rnsvg_autolinked_build/CMakeFiles/rebuild_cache.dir

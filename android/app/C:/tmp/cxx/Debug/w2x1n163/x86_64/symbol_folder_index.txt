@@ -1,0 +1,1 @@
+/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/build/intermediates/cxx/Debug/w2x1n163/obj/x86_64
