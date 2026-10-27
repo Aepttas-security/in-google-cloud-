@@ -23,7 +23,7 @@ const getHostFromExpo = (): string | null => {
 };
 
 
-export const PRODUCTION_URL = 'https://aepttas-backend.onrender.com';
+export const PRODUCTION_URL = 'https://aepttas-backend-321380050559.asia-south1.run.app';
 const expoIp = getHostFromExpo();
 export const DEFAULT_HOST = expoIp || '192.168.28.93';
 const CANDIDATE_HOSTS = [PRODUCTION_URL];
