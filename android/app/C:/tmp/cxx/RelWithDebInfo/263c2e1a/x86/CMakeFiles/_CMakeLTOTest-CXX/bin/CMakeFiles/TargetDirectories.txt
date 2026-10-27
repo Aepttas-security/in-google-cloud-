@@ -1,4 +1,0 @@
-/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
-/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
-/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
-/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/C:/tmp/cxx/RelWithDebInfo/263c2e1a/x86/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir

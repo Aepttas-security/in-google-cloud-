@@ -1,1 +1,0 @@
-/home/sivadharshan1755/app-with-aepttas-db-connection/android/app/build/intermediates/cxx/RelWithDebInfo/263c2e1a/obj/armeabi-v7a
