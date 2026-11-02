@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text
 from datetime import datetime, date
 import logging
+import uuid
 from database import get_db
 from schemas import SettingsUpdateRequest, LoginRequest, RegisterRequest
 
