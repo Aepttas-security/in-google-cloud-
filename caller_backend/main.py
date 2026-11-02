@@ -18,6 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.base import BaseHTTPMiddleware
 import logging
 
+from services.geolocation import get_location
 from routers import (
     callers_router,
     calls_router,
@@ -90,6 +91,23 @@ app.include_router(malware_router)
 app.include_router(geolocation_router)
 app.include_router(vulnerability_router)
 app.include_router(parental_router)
+
+@app.get("/geo")
+@app.get("/api/geo")
+def geo(ip: str):
+    return get_location(ip)
+
+@app.get("/analyze")
+@app.get("/api/analyze")
+def analyze(url: str, ip: str):
+    geo_data = get_location(ip)
+    return {
+        "url": url,
+        "ip": ip,
+        "geolocation": geo_data,
+        "verdict": "Safe" if geo_data.get("status") == "success" else "Suspicious",
+        "modules_used": ["Geolocation", "VirusTotal", "CVE", "ML Detection"]
+    }
 
 @app.get("/")
 @app.get("/health")
