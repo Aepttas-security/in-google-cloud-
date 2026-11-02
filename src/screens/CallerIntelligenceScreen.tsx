@@ -165,8 +165,8 @@ interface CallerIntelligenceScreenProps {
 }
 
 export const CallerIntelligenceScreen: React.FC<CallerIntelligenceScreenProps> = ({ onBack }) => {
-  const { colors } = useAppTheme();
-  const styles = useMemo(() => getStyles(colors), [colors]);
+  const { colors, mode } = useAppTheme();
+  const styles = useMemo(() => getStyles(colors, mode), [colors, mode]);
 
   const {
     blockedNumbers,
@@ -579,7 +579,7 @@ export const CallerIntelligenceScreen: React.FC<CallerIntelligenceScreenProps> =
                           cx="50"
                           cy="50"
                           r={radius}
-                          stroke="#140c3f"
+                          stroke={mode === 'light' ? '#e2e8f0' : '#140c3f'}
                           strokeWidth={strokeWidth}
                           fill="none"
                           strokeDasharray={`${(260 / 360) * circumference} ${circumference}`}
@@ -1699,8 +1699,17 @@ export const CallerIntelligenceScreen: React.FC<CallerIntelligenceScreenProps> =
   );
 };
 
-const getStyles = (colors: any) =>
-  StyleSheet.create({
+const getStyles = (colors: any, mode: 'light' | 'dark' = 'dark') => {
+  const isLight = mode === 'light';
+  const cardBg = isLight ? '#ffffff' : '#0A0726';
+  const inputBg = isLight ? '#f8fafc' : '#07051F';
+  const subtleBg = isLight ? '#f1f5f9' : '#07051F';
+  const cardBorder = isLight ? '#e2e8f0' : 'rgba(123, 44, 191, 0.2)';
+  const elevatedBg = isLight ? '#ffffff' : '#0F0A2B';
+  const elevatedBorder = isLight ? '#e2e8f0' : '#337b2cbf';
+  const subtextColor = isLight ? '#64748b' : '#6B6E85';
+
+  return StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
@@ -1722,9 +1731,9 @@ const getStyles = (colors: any) =>
       width: 40,
       height: 40,
       borderRadius: 20,
-      backgroundColor: '#0F0A2B',
+      backgroundColor: elevatedBg,
       borderWidth: 1,
-      borderColor: '#337b2cbf',
+      borderColor: elevatedBorder,
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -1737,13 +1746,13 @@ const getStyles = (colors: any) =>
       fontWeight: 'bold',
     },
     headerSubtitle: {
-      color: '#6B6E85',
+      color: subtextColor,
       fontSize: 11,
       marginTop: 2,
     },
     tabsRowContainer: {
       borderBottomWidth: 1,
-      borderBottomColor: colors.border,
+      borderBottomColor: cardBorder,
       paddingBottom: 6,
     },
     tabsRow: {
@@ -1753,21 +1762,21 @@ const getStyles = (colors: any) =>
       paddingHorizontal: 12,
       paddingVertical: 6,
       borderRadius: 8,
-      backgroundColor: '#07051F',
+      backgroundColor: subtleBg,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.12)',
+      borderColor: cardBorder,
       marginRight: 8,
     },
     tabBtnActive: {
-      backgroundColor: 'rgba(0, 119, 182, 0.2)',
-      borderColor: '#00E5FF',
+      backgroundColor: isLight ? 'rgba(0, 119, 182, 0.12)' : 'rgba(0, 119, 182, 0.2)',
+      borderColor: isLight ? '#0284c7' : '#00E5FF',
     },
     tabBtnText: {
       fontSize: 11,
-      color: '#6B6E85',
+      color: subtextColor,
     },
     tabBtnTextActive: {
-      color: '#fff',
+      color: isLight ? '#0284c7' : '#fff',
       fontWeight: 'bold',
     },
     viewContent: {
@@ -1777,7 +1786,7 @@ const getStyles = (colors: any) =>
     overlayBanner: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: 'rgba(0, 229, 255, 0.12)',
+      backgroundColor: isLight ? 'rgba(0, 229, 255, 0.08)' : 'rgba(0, 229, 255, 0.12)',
       borderWidth: 1,
       borderColor: colors.cyanAccent,
       borderRadius: 12,
@@ -1809,9 +1818,9 @@ const getStyles = (colors: any) =>
     dashboardCard: {
       width: '100%',
       borderRadius: 14,
-      backgroundColor: '#0A0726',
+      backgroundColor: cardBg,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.2)',
+      borderColor: cardBorder,
       padding: 16,
     },
     gaugeRow: {
@@ -1834,7 +1843,7 @@ const getStyles = (colors: any) =>
       fontWeight: '900',
     },
     gaugeLabel: {
-      color: '#6B6E85',
+      color: subtextColor,
       fontSize: 8,
     },
     gaugeInfo: {
@@ -1847,7 +1856,7 @@ const getStyles = (colors: any) =>
       fontWeight: 'bold',
     },
     gaugeInfoSub: {
-      color: '#6B6E85',
+      color: subtextColor,
       fontSize: 11,
       marginTop: 2,
     },
@@ -1875,13 +1884,13 @@ const getStyles = (colors: any) =>
     statWidget: {
       flex: 0.31,
       borderRadius: 10,
-      backgroundColor: '#0A0726',
-      borderWidth: 0.5,
-      borderColor: 'rgba(123, 44, 191, 0.2)',
+      backgroundColor: cardBg,
+      borderWidth: 1,
+      borderColor: cardBorder,
       padding: 12,
     },
     statWidgetLabel: {
-      color: '#6B6E85',
+      color: subtextColor,
       fontSize: 10,
     },
     statWidgetValue: {
@@ -1893,7 +1902,7 @@ const getStyles = (colors: any) =>
     sectionTitle: {
       fontSize: 10,
       fontWeight: 'bold',
-      color: '#6B6E85',
+      color: subtextColor,
       letterSpacing: 1,
       marginTop: 16,
       marginBottom: 8,
@@ -1911,29 +1920,29 @@ const getStyles = (colors: any) =>
     emptyAlertsCard: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: '#0A0726',
+      backgroundColor: cardBg,
       borderWidth: 1,
-      borderColor: 'rgba(0, 230, 118, 0.3)',
+      borderColor: isLight ? '#bbf7d0' : 'rgba(0, 230, 118, 0.3)',
       borderRadius: 12,
       padding: 14,
       marginTop: 8,
     },
     emptyAlertsTitle: {
-      color: '#00E676',
+      color: isLight ? '#15803d' : '#00E676',
       fontSize: 13,
       fontWeight: 'bold',
     },
     emptyAlertsSub: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 11,
       marginTop: 2,
     },
     alertItemCard: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: '#0A0726',
+      backgroundColor: cardBg,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.2)',
+      borderColor: cardBorder,
       borderRadius: 10,
       padding: 12,
       marginBottom: 8,
@@ -1942,7 +1951,7 @@ const getStyles = (colors: any) =>
       width: 36,
       height: 36,
       borderRadius: 18,
-      backgroundColor: '#07051F',
+      backgroundColor: subtleBg,
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -1952,7 +1961,7 @@ const getStyles = (colors: any) =>
       fontSize: 12,
     },
     alertCardDate: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 10,
     },
     alertCardTarget: {
@@ -1962,7 +1971,7 @@ const getStyles = (colors: any) =>
       fontWeight: '600',
     },
     alertCardDetail: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 10,
       marginTop: 2,
     },
@@ -1972,9 +1981,9 @@ const getStyles = (colors: any) =>
     },
     carouselCard: {
       width: '100%',
-      backgroundColor: '#0A0726',
+      backgroundColor: cardBg,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.3)',
+      borderColor: cardBorder,
       borderRadius: 14,
       padding: 16,
     },
@@ -1994,7 +2003,7 @@ const getStyles = (colors: any) =>
       marginLeft: 6,
     },
     carouselCounterText: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 11,
     },
     carouselTargetName: {
@@ -2008,7 +2017,7 @@ const getStyles = (colors: any) =>
       marginTop: 2,
     },
     carouselDetail: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 11,
       marginTop: 6,
     },
@@ -2019,13 +2028,13 @@ const getStyles = (colors: any) =>
       marginTop: 14,
       paddingTop: 10,
       borderTopWidth: 0.5,
-      borderTopColor: 'rgba(255, 255, 255, 0.1)',
+      borderTopColor: cardBorder,
     },
     carouselNavBtn: {
       width: 32,
       height: 32,
       borderRadius: 16,
-      backgroundColor: '#1e293b',
+      backgroundColor: subtleBg,
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -2037,7 +2046,7 @@ const getStyles = (colors: any) =>
       width: 6,
       height: 6,
       borderRadius: 3,
-      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+      backgroundColor: isLight ? '#cbd5e1' : 'rgba(255, 255, 255, 0.2)',
       marginHorizontal: 3,
     },
     carouselDotActive: {
@@ -2047,9 +2056,9 @@ const getStyles = (colors: any) =>
     actionWidget: {
       flex: 0.48,
       borderRadius: 12,
-      backgroundColor: '#0A0726',
+      backgroundColor: cardBg,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.2)',
+      borderColor: cardBorder,
       padding: 14,
       alignItems: 'center',
     },
@@ -2060,7 +2069,7 @@ const getStyles = (colors: any) =>
       marginTop: 8,
     },
     actionWidgetSub: {
-      color: '#6B6E85',
+      color: subtextColor,
       fontSize: 10,
       marginTop: 2,
     },
@@ -2074,7 +2083,8 @@ const getStyles = (colors: any) =>
       paddingVertical: 10,
       borderRadius: 8,
       borderWidth: 1,
-      backgroundColor: '#0A0726',
+      borderColor: cardBorder,
+      backgroundColor: cardBg,
       alignItems: 'center',
     },
     simBtnText: {
@@ -2089,17 +2099,18 @@ const getStyles = (colors: any) =>
       alignItems: 'center',
       marginTop: 12,
       borderWidth: 1,
-      borderColor: 'rgba(255, 255, 255, 0.1)',
+      borderColor: cardBorder,
+      backgroundColor: cardBg,
     },
     callScreenCardEmpty: {
       width: '100%',
       borderRadius: 16,
       padding: 36,
       alignItems: 'center',
-      backgroundColor: '#0A0726',
+      backgroundColor: cardBg,
       marginTop: 12,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.2)',
+      borderColor: cardBorder,
     },
     callScreenName: {
       color: colors.text,
@@ -2113,7 +2124,7 @@ const getStyles = (colors: any) =>
       marginTop: 4,
     },
     callScreenCarrier: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 11,
       marginTop: 4,
     },
@@ -2140,7 +2151,7 @@ const getStyles = (colors: any) =>
       fontSize: 12,
     },
     emptyCallText: {
-      color: '#6B6E85',
+      color: subtextColor,
       fontSize: 12,
       marginTop: 12,
       textAlign: 'center',
@@ -2148,9 +2159,9 @@ const getStyles = (colors: any) =>
     searchCard: {
       width: '100%',
       borderRadius: 14,
-      backgroundColor: '#0A0726',
+      backgroundColor: cardBg,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.2)',
+      borderColor: cardBorder,
       padding: 16,
     },
     searchTitle: {
@@ -2159,7 +2170,7 @@ const getStyles = (colors: any) =>
       fontWeight: 'bold',
     },
     searchSub: {
-      color: '#6B6E85',
+      color: subtextColor,
       fontSize: 11,
       marginTop: 2,
     },
@@ -2169,10 +2180,10 @@ const getStyles = (colors: any) =>
     },
     searchInput: {
       flex: 1,
-      backgroundColor: '#07051F',
+      backgroundColor: inputBg,
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.3)',
+      borderColor: cardBorder,
       color: colors.text,
       paddingHorizontal: 12,
       fontSize: 13,
@@ -2195,7 +2206,7 @@ const getStyles = (colors: any) =>
     searchResultCard: {
       width: '100%',
       borderRadius: 14,
-      backgroundColor: '#0A0726',
+      backgroundColor: cardBg,
       borderWidth: 1,
       borderColor: colors.cyanAccent,
       padding: 16,
@@ -2223,7 +2234,7 @@ const getStyles = (colors: any) =>
       marginTop: 2,
     },
     resultSub: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 11,
       marginTop: 4,
     },
@@ -2231,7 +2242,7 @@ const getStyles = (colors: any) =>
       marginTop: 10,
       paddingTop: 8,
       borderTopWidth: 0.5,
-      borderTopColor: 'rgba(255, 255, 255, 0.1)',
+      borderTopColor: cardBorder,
     },
     resultScoreText: {
       fontSize: 13,
@@ -2263,7 +2274,8 @@ const getStyles = (colors: any) =>
       padding: 12,
       marginBottom: 8,
       borderWidth: 0.5,
-      borderColor: 'rgba(255, 255, 255, 0.1)',
+      borderColor: cardBorder,
+      backgroundColor: cardBg,
     },
     historyName: {
       color: colors.text,
@@ -2276,7 +2288,7 @@ const getStyles = (colors: any) =>
       marginTop: 2,
     },
     historyDate: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 10,
       marginTop: 2,
     },
@@ -2294,13 +2306,13 @@ const getStyles = (colors: any) =>
     listEmptyPlaceholder: {
       alignItems: 'center',
       padding: 32,
-      backgroundColor: '#0A0726',
+      backgroundColor: cardBg,
       borderRadius: 12,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.2)',
+      borderColor: cardBorder,
     },
     placeholderText: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 12,
       marginTop: 8,
       textAlign: 'center',
@@ -2308,12 +2320,12 @@ const getStyles = (colors: any) =>
     blockedRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: '#0A0726',
+      backgroundColor: cardBg,
       borderRadius: 10,
       padding: 12,
       marginBottom: 8,
       borderWidth: 0.5,
-      borderColor: 'rgba(123, 44, 191, 0.2)',
+      borderColor: cardBorder,
     },
     blockedName: {
       color: colors.text,
@@ -2326,7 +2338,7 @@ const getStyles = (colors: any) =>
       marginTop: 2,
     },
     blockedDate: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 10,
       marginTop: 2,
     },
@@ -2345,7 +2357,7 @@ const getStyles = (colors: any) =>
     helplineBanner: {
       flexDirection: 'row',
       alignItems: 'center',
-      backgroundColor: 'rgba(239, 68, 68, 0.15)',
+      backgroundColor: isLight ? 'rgba(239, 68, 68, 0.08)' : 'rgba(239, 68, 68, 0.15)',
       borderWidth: 1,
       borderColor: colors.redDanger,
       borderRadius: 12,
@@ -2358,7 +2370,7 @@ const getStyles = (colors: any) =>
       fontWeight: 'bold',
     },
     helplineSub: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 11,
       marginTop: 2,
     },
@@ -2381,10 +2393,10 @@ const getStyles = (colors: any) =>
       marginBottom: 12,
     },
     scamSearchInput: {
-      backgroundColor: '#0A0726',
+      backgroundColor: inputBg,
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.3)',
+      borderColor: cardBorder,
       color: colors.text,
       paddingHorizontal: 12,
       fontSize: 12,
@@ -2394,9 +2406,9 @@ const getStyles = (colors: any) =>
       paddingHorizontal: 12,
       paddingVertical: 6,
       borderRadius: 16,
-      backgroundColor: '#0A0726',
+      backgroundColor: subtleBg,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.3)',
+      borderColor: cardBorder,
       marginRight: 8,
     },
     catChipActive: {
@@ -2404,7 +2416,7 @@ const getStyles = (colors: any) =>
       borderColor: colors.cyanAccent,
     },
     catChipText: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 11,
     },
     catChipTextActive: {
@@ -2412,10 +2424,10 @@ const getStyles = (colors: any) =>
       fontWeight: 'bold',
     },
     scamCard: {
-      backgroundColor: '#0A0726',
+      backgroundColor: cardBg,
       borderRadius: 12,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.2)',
+      borderColor: cardBorder,
       padding: 16,
       marginBottom: 12,
     },
@@ -2442,14 +2454,14 @@ const getStyles = (colors: any) =>
       fontWeight: '900',
     },
     scamDesc: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 12,
       lineHeight: 17,
       marginTop: 4,
     },
     scamSection: {
       marginTop: 8,
-      backgroundColor: '#07051F',
+      backgroundColor: subtleBg,
       padding: 10,
       borderRadius: 8,
     },
@@ -2460,12 +2472,12 @@ const getStyles = (colors: any) =>
       marginBottom: 2,
     },
     scamTactics: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 11,
       lineHeight: 16,
     },
     scamAction: {
-      color: colors.greenSuccess,
+      color: isLight ? '#15803d' : colors.greenSuccess,
       fontSize: 11,
       fontWeight: 'bold',
       lineHeight: 16,
@@ -2473,9 +2485,9 @@ const getStyles = (colors: any) =>
     settingCard: {
       width: '100%',
       borderRadius: 14,
-      backgroundColor: '#0A0726',
+      backgroundColor: cardBg,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.2)',
+      borderColor: cardBorder,
       padding: 16,
     },
     switchRow: {
@@ -2489,7 +2501,7 @@ const getStyles = (colors: any) =>
       fontWeight: 'bold',
     },
     settingSub: {
-      color: '#6B6E85',
+      color: subtextColor,
       fontSize: 10,
       marginTop: 2,
     },
@@ -2499,7 +2511,7 @@ const getStyles = (colors: any) =>
       paddingHorizontal: 12,
       paddingVertical: 6,
       borderRadius: 6,
-      backgroundColor: 'rgba(0, 229, 255, 0.1)',
+      backgroundColor: isLight ? 'rgba(0, 229, 255, 0.08)' : 'rgba(0, 229, 255, 0.1)',
     },
     grantBtnSmallText: {
       color: colors.cyanAccent,
@@ -2508,7 +2520,7 @@ const getStyles = (colors: any) =>
     },
     cardDivider: {
       height: 1,
-      backgroundColor: 'rgba(123, 44, 191, 0.2)',
+      backgroundColor: cardBorder,
       marginVertical: 16,
     },
     sliderContainer: {
@@ -2520,7 +2532,7 @@ const getStyles = (colors: any) =>
       width: 32,
       height: 32,
       borderRadius: 16,
-      backgroundColor: '#1e293b',
+      backgroundColor: subtleBg,
       justifyContent: 'center',
       alignItems: 'center',
     },
@@ -2532,7 +2544,7 @@ const getStyles = (colors: any) =>
     sliderTrackBg: {
       flex: 1,
       height: 6,
-      backgroundColor: '#1e293b',
+      backgroundColor: isLight ? '#e2e8f0' : '#1e293b',
       borderRadius: 3,
       marginHorizontal: 12,
       overflow: 'hidden',
@@ -2544,7 +2556,7 @@ const getStyles = (colors: any) =>
     },
     modalOverlay: {
       flex: 1,
-      backgroundColor: 'rgba(0, 0, 0, 0.75)',
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
       justifyContent: 'center',
       alignItems: 'center',
       padding: 20,
@@ -2552,10 +2564,10 @@ const getStyles = (colors: any) =>
     modalContent: {
       width: '100%',
       maxWidth: 400,
-      backgroundColor: '#0F0A2B',
+      backgroundColor: elevatedBg,
       borderRadius: 16,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.3)',
+      borderColor: elevatedBorder,
       padding: 20,
     },
     popupHeader: {
@@ -2582,7 +2594,7 @@ const getStyles = (colors: any) =>
       marginTop: 4,
     },
     popupDesc: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 12,
       textAlign: 'center',
       marginTop: 8,
@@ -2611,7 +2623,7 @@ const getStyles = (colors: any) =>
       alignItems: 'center',
     },
     popupTextBtnText: {
-      color: colors.textMuted,
+      color: subtextColor,
       fontSize: 12,
     },
     primaryBtn: {
@@ -2659,10 +2671,10 @@ const getStyles = (colors: any) =>
       fontSize: 12,
     },
     reportInput: {
-      backgroundColor: '#07051F',
+      backgroundColor: inputBg,
       borderRadius: 8,
       borderWidth: 1,
-      borderColor: 'rgba(123, 44, 191, 0.3)',
+      borderColor: cardBorder,
       color: colors.text,
       paddingHorizontal: 12,
       paddingVertical: 8,
@@ -2671,3 +2683,4 @@ const getStyles = (colors: any) =>
       minHeight: 40,
     },
   });
+};
