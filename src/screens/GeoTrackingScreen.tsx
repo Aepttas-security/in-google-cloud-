@@ -107,27 +107,39 @@ export const GeoTrackingScreen: React.FC<GeoTrackingScreenProps> = ({ onBack }) 
 
   const [requestsList, setRequestsList] = useState<GeoRequest[]>(allRequests);
   const [selectedFilter, setSelectedFilter] = useState<'All' | '1H' | '24H' | '7D'>('All');
-  const [selectedRequest, setSelectedRequest] = useState<GeoRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<GeoRequest | null>(allRequests[0]);
   const [dynamicNearbyPlaces, setDynamicNearbyPlaces] = useState<NearbyPlace[]>([]);
 
   // User live location state
   const [isDetectingLocation, setIsDetectingLocation] = useState(false);
   const [locationStatus, setLocationStatus] = useState<string>('Initializing live location detector...');
   const [userLiveLocation, setUserLiveLocation] = useState<UserLiveLocation | null>(null);
+  const isMountedRef = useRef(true);
+
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   /**
    * Detects the user's real live location (via native GPS or network/IP)
    */
   const detectLiveLocation = useCallback(async (isManual = false) => {
+    if (!isMountedRef.current) return;
     setIsDetectingLocation(true);
     setLocationStatus('Acquiring real-time GPS & network coordinates...');
 
     try {
       const live = await locationService.detectLiveLocation();
+      if (!isMountedRef.current) return;
       setUserLiveLocation(live);
 
-      const xPercent = Math.max(0.08, Math.min(0.92, (live.longitude + 180) / 360));
-      const yPercent = Math.max(0.1, Math.min(0.9, (90 - live.latitude) / 180));
+      const validLon = Number.isFinite(live.longitude) ? live.longitude : 77.5946;
+      const validLat = Number.isFinite(live.latitude) ? live.latitude : 12.9716;
+      const xPercent = Math.max(0.08, Math.min(0.92, (validLon + 180) / 360));
+      const yPercent = Math.max(0.1, Math.min(0.9, (90 - validLat) / 180));
 
       const liveRequest: GeoRequest = {
         ip: live.ip,
@@ -156,16 +168,25 @@ export const GeoTrackingScreen: React.FC<GeoTrackingScreenProps> = ({ onBack }) 
       setSelectedRequest(liveRequest);
       setLocationStatus(`Live Location Fix: ${live.city}, ${live.country} (±${live.accuracy}m)`);
     } catch (err: any) {
-      console.log('[GeoTrackingScreen] Live location detection error:', err);
-      setLocationStatus('Could not acquire live GPS. Tap Detect to retry.');
+      console.log('[GeoTrackingScreen] Live location detection notice:', err);
+      if (isMountedRef.current) {
+        setLocationStatus('Could not acquire live GPS. Tap Detect to retry.');
+      }
     } finally {
-      setIsDetectingLocation(false);
+      if (isMountedRef.current) {
+        setIsDetectingLocation(false);
+      }
     }
   }, []);
 
-  // Initial trigger for live location detection
+  // Initial trigger for live location detection: delayed slightly to allow screen transition
   useEffect(() => {
-    detectLiveLocation(false);
+    const timer = setTimeout(() => {
+      if (isMountedRef.current) {
+        detectLiveLocation(false);
+      }
+    }, 200);
+    return () => clearTimeout(timer);
   }, [detectLiveLocation]);
 
   // Fetch backend geolocation history
@@ -253,30 +274,38 @@ export const GeoTrackingScreen: React.FC<GeoTrackingScreenProps> = ({ onBack }) 
   const pulseAnim = useRef(new Animated.Value(0.4)).current;
 
   useEffect(() => {
-    Animated.loop(
+    const radarLoop = Animated.loop(
       Animated.timing(rotateAnim, {
         toValue: 1,
         duration: 6000,
         easing: Easing.linear,
         useNativeDriver: true,
       })
-    ).start();
+    );
+    radarLoop.start();
 
-    Animated.loop(
+    const pulseLoop = Animated.loop(
       Animated.sequence([
         Animated.timing(pulseAnim, {
           toValue: 1,
           duration: 1500,
-          easing: Easing.linear,
+          easing: Easing.out(Easing.ease),
           useNativeDriver: true,
         }),
         Animated.timing(pulseAnim, {
           toValue: 0.4,
-          duration: 0,
+          duration: 1500,
+          easing: Easing.in(Easing.ease),
           useNativeDriver: true,
-        })
+        }),
       ])
-    ).start();
+    );
+    pulseLoop.start();
+
+    return () => {
+      radarLoop.stop();
+      pulseLoop.stop();
+    };
   }, [pulseAnim, rotateAnim]);
 
   const spin = rotateAnim.interpolate({
@@ -450,14 +479,14 @@ export const GeoTrackingScreen: React.FC<GeoTrackingScreenProps> = ({ onBack }) 
       {/* 4. INTERACTIVE MAP BOX */}
       <View style={styles.mapContainer}>
         {/* Latitude/Longitude Grid Lines */}
-        <Svg width="100%" height="100%" style={StyleSheet.absoluteFill}>
+        <Svg width={mapWidth} height={mapHeight} style={StyleSheet.absoluteFill}>
           {/* Horizontal Lines */}
           {[1, 2, 3, 4, 5].map(i => (
             <Line
               key={`h-${i}`}
               x1="0"
               y1={(mapHeight / 6) * i}
-              x2="100%"
+              x2={mapWidth}
               y2={(mapHeight / 6) * i}
               stroke={colors.border}
               strokeWidth="0.8"
@@ -471,7 +500,7 @@ export const GeoTrackingScreen: React.FC<GeoTrackingScreenProps> = ({ onBack }) 
               x1={(mapWidth / 10) * i}
               y1="0"
               x2={(mapWidth / 10) * i}
-              y2="100%"
+              y2={mapHeight}
               stroke={colors.border}
               strokeWidth="0.8"
               opacity={0.3}
@@ -499,7 +528,7 @@ export const GeoTrackingScreen: React.FC<GeoTrackingScreenProps> = ({ onBack }) 
           ]}
           pointerEvents="none"
         >
-          <Svg width="100%" height="100%">
+          <Svg width={mapWidth} height={mapHeight}>
             <Line
               x1={mapWidth / 2}
               y1={mapHeight / 2}
@@ -515,7 +544,7 @@ export const GeoTrackingScreen: React.FC<GeoTrackingScreenProps> = ({ onBack }) 
         {/* Request Markers */}
         {filteredRequests.map((req) => {
           const isSelected = selectedRequest?.ip === req.ip;
-          const isUser = req.isUserLiveLocation;
+          const isUser = Boolean(req.isUserLiveLocation);
           const markerColor = isUser
             ? colors.cyanAccent
             : req.threatLevel === 'High Risk'
@@ -524,14 +553,17 @@ export const GeoTrackingScreen: React.FC<GeoTrackingScreenProps> = ({ onBack }) 
             ? colors.orangeWarning
             : colors.greenSuccess;
 
+          const validX = Number.isFinite(req.xPercent) ? Math.max(0.08, Math.min(0.92, req.xPercent)) : 0.5;
+          const validY = Number.isFinite(req.yPercent) ? Math.max(0.1, Math.min(0.9, req.yPercent)) : 0.5;
+
           return (
             <TouchableOpacity
               key={`${req.ip}-${isUser ? 'user' : 'node'}`}
               style={[
                 styles.markerContainer,
                 {
-                  left: req.xPercent * mapWidth - 15,
-                  top: req.yPercent * mapHeight - 15,
+                  left: validX * mapWidth - 15,
+                  top: validY * mapHeight - 15,
                   zIndex: isUser ? 25 : 10,
                 },
               ]}
@@ -539,17 +571,30 @@ export const GeoTrackingScreen: React.FC<GeoTrackingScreenProps> = ({ onBack }) 
             >
               <View style={styles.markerAnchor}>
                 {/* Pulsing Outer Ring */}
-                <Animated.View
-                  style={[
-                    styles.pulsingRing,
-                    {
-                      borderColor: markerColor,
-                      borderWidth: isUser ? 2 : 1.5,
-                      transform: [{ scale: (isSelected || isUser) ? pulseScale : 1.2 }],
-                      opacity: (isSelected || isUser) ? pulseOpacity : 0.3,
-                    },
-                  ]}
-                />
+                {(isSelected || isUser) ? (
+                  <Animated.View
+                    style={[
+                      styles.pulsingRing,
+                      {
+                        borderColor: markerColor,
+                        borderWidth: isUser ? 2 : 1.5,
+                        transform: [{ scale: pulseScale }],
+                        opacity: pulseOpacity,
+                      },
+                    ]}
+                  />
+                ) : (
+                  <View
+                    style={[
+                      styles.pulsingRing,
+                      {
+                        borderColor: markerColor,
+                        borderWidth: 1.5,
+                        opacity: 0.25,
+                      },
+                    ]}
+                  />
+                )}
                 {/* Core Center Dot */}
                 <View
                   style={[

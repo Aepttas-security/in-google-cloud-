@@ -46,8 +46,67 @@ type ScreenName =
   | 'TwoStepBinding';
 
 import { useAppTheme } from './src/contexts/ThemeContext';
+import { Text, TouchableOpacity } from 'react-native';
 
-function AppContent({ renderScreen }: { renderScreen: () => React.ReactNode }) {
+interface ErrorBoundaryProps {
+  onReset: () => void;
+  colors: any;
+  children: React.ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+  error: Error | null;
+}
+
+class ScreenErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: any) {
+    console.error('[ScreenErrorBoundary] Caught error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      const { colors, onReset } = this.props;
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 24, backgroundColor: colors?.background || '#090d16' }}>
+          <Text style={{ color: '#ef4444', fontSize: 18, fontWeight: 'bold', marginBottom: 8, textAlign: 'center' }}>
+            Screen Notice
+          </Text>
+          <Text style={{ color: colors?.textMuted || '#94a3b8', fontSize: 13, marginBottom: 20, textAlign: 'center', lineHeight: 18 }}>
+            {this.state.error?.message || 'An unexpected issue occurred while rendering this module.'}
+          </Text>
+          <TouchableOpacity
+            style={{ backgroundColor: '#6366f1', paddingHorizontal: 20, paddingVertical: 12, borderRadius: 14 }}
+            onPress={() => {
+              this.setState({ hasError: false, error: null });
+              onReset();
+            }}
+          >
+            <Text style={{ color: '#fff', fontWeight: 'bold', fontSize: 14 }}>Return to Dashboard</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+function AppContent({
+  renderScreen,
+  onResetToDashboard,
+}: {
+  renderScreen: () => React.ReactNode;
+  onResetToDashboard: () => void;
+}) {
   const { colors, mode } = useAppTheme();
   
   return (
@@ -55,7 +114,9 @@ function AppContent({ renderScreen }: { renderScreen: () => React.ReactNode }) {
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]} edges={['top', 'left', 'right']}>
         <StatusBar barStyle={mode === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.background} />
         <View style={styles.safeArea}>
-          {renderScreen()}
+          <ScreenErrorBoundary onReset={onResetToDashboard} colors={colors}>
+            {renderScreen()}
+          </ScreenErrorBoundary>
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
@@ -323,7 +384,13 @@ function App() {
 
   return (
     <ThemeProvider>
-      <AppContent renderScreen={renderScreen} />
+      <AppContent
+        renderScreen={renderScreen}
+        onResetToDashboard={() => {
+          setCurrentScreen('Dashboard');
+          setScreenStack(['Dashboard']);
+        }}
+      />
     </ThemeProvider>
   );
 }
